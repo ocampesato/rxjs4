@@ -1,0 +1,24 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Subjects</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    var subject = new Rx.Subject();
+    subject.subscribe(x => console.log(`Got an item: ${x}`));
+    subject.onNext(4);
+    subject.onNext(7);
+    subject.onCompleted();
+  </script>
+ </body>
+</html>
+

@@ -1,0 +1,65 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Observables and SVG</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+  </script>
+
+  <div id="outer1">
+    <svg width="600" height="300" id="svg1" />
+  </div>
+
+  <script>
+    var minorAxis = 30,  majorAxis = 10, strokeWidth = 1; 
+    var colors = ["#FF0000", "#FFFF00", "#0000FF", "#FFFFFF"];
+    var color  = colors[0], colorIndex = 0;
+    var svgNS  = "http://www.w3.org/2000/svg";
+    var svg    = document.querySelector("#svg1");
+    var svgDocument;
+
+    window.onload = function(evt){
+      svgDocument = document.getElementById("svg1").ownerDocument;
+
+      // set up RxJS-related stuff...
+      var mouseDownEvt = Rx.Observable.fromEvent(svg,      "mousedown");
+      var mouseUpEvt   = Rx.Observable.fromEvent(svg,      "mouseup");
+      var mouseMoveEvt = Rx.Observable.fromEvent(document, "mousemove");
+
+      mouseDownEvt.map(function () {
+         return mouseMoveEvt.takeUntil(mouseUpEvt);
+      })
+      .concatAll()
+      .subscribe(function (e) {
+         // create an SVG graphics element: 
+         var elem = svgDocument.createElementNS(svgNS, "ellipse");
+         elem.setAttribute("fill",   colors[(colorIndex++)%colors.length]);
+         elem.setAttribute("stroke", colors[(1+colorIndex)%colors.length]);
+         elem.setAttribute("stroke-width", strokeWidth);
+         elem.setAttribute("cx", e.x);
+         elem.setAttribute("cy", e.y);
+         elem.setAttribute("rx", majorAxis);
+         elem.setAttribute("ry", minorAxis);
+         // append the SVG element to the <svg> element: 
+         $("#svg1").append(elem);
+      });
+
+      // set initial click position
+      mouseDownEvt.subscribe(function (e) {
+       //offsetX = e.x - parseInt(svg.offsetLeft);
+       //offsetY = e.y - parseInt(svg.offsetTop);
+      });
+    }
+  </script>
+ </body>
+</html>
+

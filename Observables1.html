@@ -1,0 +1,76 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+
+    //---------------------------------------------------
+    console.log("Sample #1: without Observables");
+    var source = ['1','1','foo','2','3','5','bar','8','13'];
+    var result = source;
+    console.log("result = "+result);
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #2: elements (without Observables) and filter");
+    var source = ['1','1','foo','2','3','5','bar','8','13'];
+
+    var result2 = source.map(x => parseInt(x));
+    console.log("result2: "+result2);
+
+    var result3 = source
+                   .map(x => parseInt(x))
+                   .filter(x => !isNaN(x));
+    console.log("result3: "+result3);
+
+    var result4 = source
+                   .map(x => parseInt(x))
+                   .filter(x => !isNaN(x))
+                   .reduce((x,y) => x+y);
+    console.log("result4: "+result4);
+
+    var result5 = source
+                   .filter(x => isNaN(x))
+                   .reduce((x,y) => x+y);
+    console.log("result5: "+result5);
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #3: JSON array"); 
+    var x = [{number:1},{number:2}];
+    x.forEach(function(obj){
+       obj.number++;
+    })
+    console.log("x = "+JSON.stringify(x));
+    // [ { number: 2 }, { number: 3 } ]
+
+    y = [{number:1},{number:2}];
+    y.map(function(obj){
+       obj.number++;
+    })
+    console.log("y = "+JSON.stringify(y));
+    // [ { number: 2 }, { number: 3 } ]
+    //---------------------------------------------------
+  </script>
+ </body>
+</html>
+

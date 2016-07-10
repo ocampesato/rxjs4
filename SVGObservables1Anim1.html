@@ -1,0 +1,60 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Observables and SVG</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+  </script>
+
+  <div id="outer1">
+    <svg width="600" height="300" id="svg1" />
+  </div>
+
+  <script>
+    var XPoints = [], factor=30;
+    var minorAxis = 20,  majorAxis = 40, strokeWidth = 1; 
+    var colors = ["#FF0000", "#FFFF00", "#0000FF"];
+    var color  = colors[0], colorIndex = 0;
+    var svgNS  = "http://www.w3.org/2000/svg";
+    var svg    = document.querySelector("#svg1");
+    var svgDocument;
+
+    window.onload = function(evt){
+      svgDocument = document.getElementById("svg1").ownerDocument;
+       
+      // generate some positions for the ellipses 
+      for(var i=2; i<10; i++) {
+         XPoints.push(i*factor);
+      }
+
+      var delay = Rx.Observable.empty().delay(1000);
+      var items = Rx.Observable.fromArray(XPoints)
+                    .map(function (x) {
+                      return Rx.Observable.return(x).concat(delay); 
+                    })
+                    .concatAll();
+
+      items.subscribe(x => {
+          // create an SVG graphics element: 
+          var elem = svgDocument.createElementNS(svgNS, "ellipse");
+          elem.setAttribute("fill",   colors[(colorIndex++)%colors.length]);
+          elem.setAttribute("stroke", colors[(1+colorIndex)%colors.length]);
+          elem.setAttribute("stroke-width", strokeWidth);
+          elem.setAttribute("cx", x);
+          elem.setAttribute("cy", x);
+          elem.setAttribute("rx", majorAxis);
+          elem.setAttribute("ry", minorAxis);
+          // append the SVG element to the <svg> element: 
+          $("#svg1").append(elem);
+        });
+    }
+  </script>
+ </body>
+</html>
+

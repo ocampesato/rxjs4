@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    var source = Rx.Observable.from(['a1','a2','a3','a4','a5'])
+                   .map((item) => { 
+                      item = item.toUpperCase();
+                      return item; 
+                   })
+                   .subscribe(function(item) {
+                      console.log("item: "+item);
+                   });
+
+    var observer = { 
+                    onNext :       console.log("3inside onNext"),
+                    onCompleted :  console.log("3inside onCompleted"),
+                    onError :      console.log("3inside onError")
+                   } 
+  </script>
+ </body>
+</html>
+

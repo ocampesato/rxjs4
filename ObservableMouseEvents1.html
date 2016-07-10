@@ -1,0 +1,58 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <div id="img1" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+
+<style type="text/css">
+ #img1 {
+   border: solid 1px black;
+   position: absolute;
+   background-image:url("sample1.png");
+   background-size: 130px 100px;
+   height: 100px;
+   width: 130px;
+   cursor: move;
+ }
+</style>
+
+  <div id="img1" />
+
+  <script>
+    window.onload=function(){
+      var img = document.querySelector("#img1");
+      var offsetX = 0, offsetY = 0;
+
+      var mouseDowns = Rx.Observable.fromEvent(img, "mousedown");
+      var mouseUps   = Rx.Observable.fromEvent(img, "mouseup");
+      var mouseMoves = Rx.Observable.fromEvent(document, "mousemove");
+
+      mouseDowns.map(function () {
+         return mouseMoves.takeUntil(mouseUps);
+      })
+      .concatAll()
+      .subscribe(function (e) {
+         img.style.left = e.x - offsetX + "px";
+         img.style.top  = e.y - offsetY + "px";
+      });
+
+      // set initial click position
+      mouseDowns.subscribe(function (e) {
+         offsetX = e.x - parseInt(img.offsetLeft);
+         offsetY = e.y - parseInt(img.offsetTop);
+      });
+    }
+  </script>
+ </body>
+</html>
+

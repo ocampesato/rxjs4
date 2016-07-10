@@ -1,0 +1,58 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    // https://www.youtube.com/watch?v=zAWB3lPixtk
+
+    let Observer = {
+       next(value) {
+          document.body.innerText += value+", I just woke up\n"
+       },
+       error(error) {
+          document.body.innerText += "something happened: "+error+"\n"
+       },
+       complete() {
+          document.body.innerText += "I'm complete now\n"
+       }
+    }
+
+    function myStatus(Observer) { 
+       let id = setInterval(() => { 
+          Observer.next("pasta")
+       }, 1000)
+
+       return () => {
+          clearInterval(id)
+          Observer.complete()
+       }
+    }
+
+  //myStatus(Observer);
+    let unsubscribe = myStatus(Observer)
+    setTimeout(unsubscribe, 4500)
+
+    // operator
+    function map(callback, Observable) {
+       function map(Observer) {
+           return Observable({
+              next(value)  {Observer.next(callback(value)) },
+              error(value) {Observer.error(callback(value) },
+              complete()   {Observer.complete() } 
+           })
+       } 
+    } 
+  </script>
+ </body>
+</html>
+

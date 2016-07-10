@@ -1,0 +1,106 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+<!--
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.js">
+  </script>
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.node.js>
+  </script>
+-->
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+
+/*
+    //---------------------------------------------------
+    console.log("Sample #1: cold observables"); 
+    var clock = Rx.Observable.interval(500).take(10).map(x => x+1);
+    clock.subscribe(i => console.log('a: '+i));
+ 
+    setTimeout(function() {
+       clock.subscribe(i=> console.log(' b: ' +i));
+    }, 2100);
+    //---------------------------------------------------
+*/
+
+// http://xgrommx.github.io/rx-book/content/getting_started_with_rxjs/creating_and_querying_observable_sequences/creating_and_subscribing_to_simple_observable_sequences.html
+
+// The publish operator provides a mechanism to 
+// share subscriptions by broadcasting a single 
+// subscription to multiple subscribers.
+
+/*
+    //---------------------------------------------------
+    console.log("Sample #2: hot observables"); 
+    var clock = Rx.Observable.interval(500).take(10)
+                  .map(x => x+1) 
+                  .publish().refCount();
+ 
+    clock.subscribe(i => console.log('a: '+i));
+ 
+    setTimeout(function() {
+       clock.subscribe(i=> console.log(' b: ' +i));
+    }, 2100);
+    //---------------------------------------------------
+*/
+
+    //---------------------------------------------------
+    console.log("Sample #3: Observables and 'skipWhile'"); 
+    var source = Rx.Observable.range(0, 6)
+                   .skipWhile(function (x) { return x < 3; });
+ 
+    var subscription = source.subscribe(
+     function (x) {
+         console.log('Skip while Next: ' + x);
+     },
+     function (err) {
+         console.log('Skip while Error: ' + err);   
+     },
+     function () {
+         console.log('Skip while Completed');   
+    });
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #3: Observables and 'skipLast'"); 
+    var source = Rx.Observable.range(0, 6)
+                   .skipLast(3);
+
+    var subscription = source.subscribe(
+       function (x) {
+           console.log('Skip last Next: ' + x);
+       },
+       function (err) {
+           console.log('Skip last Error: ' + err);   
+       },
+       function () {
+           console.log('Skip last Completed');   
+    });
+    //---------------------------------------------------
+  </script>
+ </body>
+</html>
+

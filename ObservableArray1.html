@@ -1,0 +1,36 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    // all values displayed with no delay 
+    var source1 = Rx.Observable.of(1, 2, 3).share()
+  //source1.subscribe(console.log.bind(console));
+    source1.subscribe(n => console.log("result1: "+(n + 1)));
+
+    // all values displayed after two-second delay 
+    var source2 = Rx.Observable.of(1, 2, 3).share() 
+    source2.subscribe(n => setTimeout(() => console.log("result2: "+(n + 1)), 2000));
+
+    // all *messages* are displayed with no delay 
+    var source3 = Rx.Observable.of(1, 2, 3).share() 
+    source3.subscribe(n => myDelay(n));
+
+    function myDelay(n) {
+console.log("inside myDelay: "+n) 
+      setTimeout(() => console.log("result3: "+3*n), 2000);
+    }
+  </script>
+ </body>
+</html>
+

@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <input id="item" type="text"></input>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    let in1 = document.querySelector('#item')
+
+    let obs1 = Rx.Observable.fromEvent(in1, 'input')
+                 .map(evt => evt.target.value) 
+                 .filter(val => val.indexOf("e") >= 0) 
+
+    let obs2 = Rx.Observable.fromEvent(in1, 'input')
+                 .map(evt => evt.target.value) 
+                 .filter(val => val > 10)
+
+    // Activate the observable and log values of 'pushed' events
+    obs1.subscribe(value => console.log("value = "+value));
+    obs2.subscribe(value => console.log("value = "+value));
+  </script>
+ </body>
+</html>
+

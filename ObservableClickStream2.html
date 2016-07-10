@@ -1,0 +1,61 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <button type="input" id="btn1">Click</button>
+  <input  type="text"  id="output" size="40"></input>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    // https://github.com/Reactive-Extensions/RxJS
+    // https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+
+    var inputButton  = document.querySelector('#btn1');
+    var outputText   = document.querySelector('#output');
+    var buttonClickStream = Rx.Observable.fromEvent(inputButton, 'click');
+
+    var reqStream = buttonClickStream
+                      .map(function() {
+                        var randomOffset = Math.floor(Math.random()*500);
+                        console.log("random value = "+randomOffset); 
+                        return 'https://api.github.com/users?since=' + randomOffset;
+                      })
+                      .subscribe((result) => outputText.value = result);
+                    //.subscribe((result) => console.log('2url: '+result));
+
+/*
+    var requestOnRefreshStream = buttonClickStream
+                          .map(function() {
+                            var randomOffset = Math.floor(Math.random()*500);
+                            console.log("2random value = "+randomOffset); 
+                            return 'https://api.github.com/users?since=' + randomOffset;
+                          });
+    
+    var startupRequestStream = Rx.Observable.just('https://api.github.com/users');
+
+    var requestStream = Rx.Observable.merge(
+      requestOnRefreshStream, startupRequestStream
+    ) 
+    .subscribe((result) => console.log('3url: '+result));
+
+    var requestStream2 = buttonClickStream
+      .map(function() {
+        var randomOffset = Math.floor(Math.random()*500);
+        return 'https://api.github.com/users?since=' + randomOffset;
+      })
+      .startWith('https://api.github.com/users')
+      .subscribe((result) => console.log('4url: '+result));
+*/
+  </script>
+ </body>
+</html>
+

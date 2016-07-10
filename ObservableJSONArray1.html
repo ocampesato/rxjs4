@@ -1,0 +1,38 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <input id="item" type="text"></input>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+  //const source = getAsyncData();
+    var source = [{"price":25}, {"price":10}, {"price":40}];
+
+    var result = source.filter(quote => quote.price > 20)
+                       .map(quote => quote.price)
+                       .forEach(price => console.log(`Price over $20: ${price}`));
+
+/*
+    var result2 = source.filter(quote => quote.price > 30)
+                        .map(quote => quote.price)
+                        .subscribe(
+                          onNext     => console.log(`Prices higher than $30: ${price}`),
+                          onError    => console.log(`Something went wrong: ${err.message}`),
+                          onComplete => console.log(`Something went wrong: ${err.message}`)
+                        );
+
+    result2.dispose();
+*/
+  </script>
+ </body>
+</html>
+

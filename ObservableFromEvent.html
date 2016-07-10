@@ -1,0 +1,30 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+     var initialize = Rx.Observable
+                        .fromEvent(document, "DOMContentLoaded")
+                        .take(1) 
+
+     initialize.subscribe(
+        function () {
+           console.log("DOMContentLoaded event occurred");
+        }, 
+        function () { 
+           console.log("Error occurred: reload webpage") 
+        }); 
+  </script>
+ </body>
+</html>
+

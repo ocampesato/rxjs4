@@ -1,0 +1,40 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Subjects</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    var subject = new Rx.Subject();
+  
+    var subscription = subject.subscribe(
+      function (x) {
+          console.log('Next: ' + x.toString());
+      },
+      function (err) {
+          console.log('Error: ' + err);
+      },
+      function () {
+          console.log('Completed');
+      });
+
+    subject.onNext(42);
+    // => Next: 42
+    
+    subject.onNext(56);
+    // => Next: 56
+    
+    subject.onCompleted();
+    // => Completed
+  </script>
+ </body>
+</html>
+

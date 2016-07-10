@@ -1,0 +1,166 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+<!--
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.js">
+  </script>
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.node.js>
+  </script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+-->
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+
+    //---------------------------------------------------
+    console.log("Sample #1: take");
+    var source = Rx.Observable.interval(500).take(5)
+                   .map(i => ['1','1','foo','2','3','5','bar','8','13'][i]);
+
+    var result1 = source
+                   .map(x => parseInt(x))
+                   .filter(x => !isNaN(x))
+                   .subscribe(x => console.log('Number x = '+x));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #2: Observable multiply numbers by 10");
+    var source = Rx.Observable.interval(500).take(5)
+                   .map(i => ['1','3','5','7','9','11'][i]);
+    var result2 = source
+                   .map(x => parseInt(x))
+                   .map(x => 10*x)
+                   .subscribe(x => console.log('result2 x = '+x));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #3: Observables and interval/take");
+    var source = Rx.Observable.interval(500).take(6)
+                   .map(i => ['1','1','foo','2','3','5','bar','8','13'][i]); 
+
+    var result = source
+                   .map(x => parseInt(x))
+                   .filter(x => !isNaN(x))
+                   .map(x => 10*x)
+                   .concat() 
+                   .subscribe(x => console.log('Parsed x = '+x));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #4: Observables with range/filter/map");
+    Rx.Observable.range(3,6)  // (start value,number of values) 
+      .filter(i => i % 2 == 0)
+      .map(i => 'http://localhost:4000/service' + i)
+      .subscribe(item => {
+         console.log("item = "+item);
+    })
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #5: Observables and 'zip'");
+    var a = Rx.Observable.range(1, 5);
+    var b = Rx.Observable.range(7, 12);
+    var x = Rx.Observable.zip(a, b, (a1, b1) => a1 + b1).subscribe();
+
+    var s1 = a.subscribe(
+      x  => console.log('SourceA onNext:  %s', x),
+      e  => console.log('SourceA Range onError: %s', e),
+      () => console.log('SourceA Range onCompleted'));
+    
+    var s2 = a.subscribe(
+      x  => console.log('SourceB onNext:  %s', x),
+      e  => console.log('SourceB Range onError: %s', e),
+      () => console.log('SourceB Range onCompleted'));
+    //---------------------------------------------------
+    
+// http://stackoverflow.com/questions/34996725/how-can-start-and-stop-an-interval-observable-in-rxjs
+
+    //---------------------------------------------------
+    console.log("Sample #6: Observables and timers *stops with timeout*");
+    console.log('Current time: '+Date.now());
+    var timer = Rx.Observable.timer(
+                      1000, // 1 second 
+                      1000) // 1 second
+                   .timestamp();
+    
+    var result = timer.subscribe(
+                   x => console.log("Timer "+x.value+': '+x.timestamp));
+
+    // set a timeout of 3 seconds for the timer 
+    setTimeout(() => {
+      result.dispose();
+    }, 3000);
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #7: Observables and timers *stops with take*");
+    var source = Rx.Observable
+                   .interval(500)
+                   .timeInterval()
+                   .map(x => { return 'Timer '+x.value+': '+x.interval; })
+                   .take(5);
+    
+      var subscription = source.subscribe(
+         function (x) {
+            console.log('Timer Next: ' + x + ' ');
+         },
+         function (err) {
+           console.log('Timer Error: ' + err);
+         },
+         function () {
+           console.log('Timer Completed');
+      });
+    //---------------------------------------------------
+    
+    //---------------------------------------------------
+    console.log("Sample #8: Observables and Promises");
+    // Create a promise which resolves 13
+    var promise = new Promise(function(resolve) {
+        var value = 13;
+        resolve(value);
+    });
+  
+    var source1 = Rx.Observable.fromPromise(promise);
+    var subscription1 = source1.subscribe(
+        function (x) {
+            console.log('fromPromise Next: '+x);
+        },
+        function (err) {
+            console.log('fromPromise Error: '+err);   
+        },
+        function () {
+            console.log('fromPromise Completed');   
+        });
+    //---------------------------------------------------
+    
+    //---------------------------------------------------
+    console.log("Sample #9: Observables and 'of' and 'concat'");
+    const streamA$ = Rx.Observable.of(5);
+    const streamB$ = Rx.Observable.of(8);
+    const streamC$ = Rx.Observable.concat(streamA$, streamB$)
+    streamC$.subscribe(x => console.log("1concat = "+x)); 
+    //---------------------------------------------------
+  </script>
+ </body>
+</html>
+

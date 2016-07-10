@@ -1,0 +1,40 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <input id="item" type="text"></input>
+  <input id="result" type="text"></input>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script src="https://code.jquery.com/jquery.js"></script>
+
+  <script>
+    // https://github.com/Reactive-Extensions/RxJS
+    // https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+
+    const $input = $('#item');
+    const $results = $('#result');
+
+    // Only get the value from each key up 
+    var keyups = Rx.Observable.fromEvent($input, 'keyup')
+                              .pluck('target', 'value')
+                              .filter(text => text.length > 2 );
+    
+    // Now debounce the input for 500ms 
+  //var debounced = keyups.debounce(500 /* ms */);
+    
+    // Now get only distinct values, so we eliminate the arrows and other control characters 
+  //var distinct = debounced.distinctUntilChanged();
+  </script>
+ </body>
+</html>
+

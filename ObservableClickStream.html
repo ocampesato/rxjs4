@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <button type="input" id="btn1">Click</button>
+  <input  type="text"  id="output" size="40"></input>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    var inputButton = document.querySelector('#btn1');
+    var outputText  = document.querySelector('#output');
+    var clickStream = Rx.Observable.fromEvent(inputButton, 'click');
+
+    var reqStream = clickStream
+                      .map(function() {
+                        var randomOffset = Math.floor(Math.random()*500);
+                        console.log("random value = "+randomOffset); 
+                        return 'https://api.github.com/users?since=' + randomOffset;
+                      })
+                      .subscribe((result) => outputText.value = result);
+  </script>
+ </body>
+</html>
+

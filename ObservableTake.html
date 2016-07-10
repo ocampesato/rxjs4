@@ -1,0 +1,43 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+
+  <script>
+    console.log("=> 3 elements with Observables and 'take'");
+    var source = Rx.Observable
+                   .interval(1000)
+                   .take(4)
+                   .map(i => ['1','2','3','4','5'][i]);
+    var result = source.subscribe(x => console.log("x = "+x));
+
+/*
+    var source2 = Rx.Observable
+                    .interval(500)
+                    .take(4)
+                    .map(i => ['1','2','3','4','5'][i]);
+
+    var subscription = source2.subscribe(
+      x  => console.log('source2 onNext:  %s', x),
+      e  => console.log('source2 onError: %s', e),
+      () => console.log('source2 onCompleted'));
+*/
+  </script>
+ </body>
+</html>
+

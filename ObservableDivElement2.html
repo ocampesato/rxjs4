@@ -1,0 +1,32 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+
+  <div id="div1">This is a DIV element</div>
+  <div id="div2">This is a DIV element</div>
+  <script>
+    let div1 = document.querySelector('#div1')
+    let div2 = document.querySelector('#div2')
+
+    var stream = Rx.Observable
+                   .interval(500)
+                   .take(10)
+                   .map(x => x*x)
+                   .subscribe(x => {
+                      div1.innerHTML += x;
+                      div2.innerHTML += x;
+                    })
+  </script>
+ </body>
+</html>
+

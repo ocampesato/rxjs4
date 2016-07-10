@@ -1,0 +1,27 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+
+  <script>
+    var source = Rx.Observable
+                   .range(0, 20)  
+                   .filter(x => x < 4)  
+
+    var source = Rx.Observable
+                   .range(0, 20)  
+                   .filter(x => x < 4)  
+                   .subscribe(x => console.log("x = "+x))
+  </script>
+ </body>
+</html>
+

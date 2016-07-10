@@ -1,0 +1,137 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+<!--
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.js">
+  </script>
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.node.js>
+  </script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+-->
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+
+    //---------------------------------------------------
+    console.log("Sample #1: Observable with one value and 'of'"); 
+    const stream1 = Rx.Observable.of(5);
+    stream1.subscribe(console.log); 
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #2: Observables with 'from' and one value"); 
+    const stream2 = Rx.Observable.of(4) 
+                      .map(x => x * 3)  
+                      .subscribe(x => console.log("x = "+x)); 
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #3: Observables with 'from' and an array"); 
+    const stream3 = Rx.Observable.from([1,2,3,4]) 
+                      .map(x => x * 3)  
+                      .subscribe(x => console.log("x = "+x)); 
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #4: Observables with 'onNext' and 'onComplete'"); 
+    Rx.Observable.create(observer => {
+        observer.onNext(1);
+        observer.onCompleted();
+    }).map(function (x) {
+        console.log('1inside map: '+x);
+    }).subscribe(function () {
+        console.log('1inside subscribe');
+    });
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #5: Observable with onNext"); 
+    var source = Rx.Observable.create(observer => {
+        observer.onNext(13);
+        observer.onNext(55);
+        observer.onCompleted();
+    }).map(function (x) {
+        console.log('2inside map: '+x);
+    });
+
+    var result = source;
+    result.subscribe(() => console.log('2inside subscribe'));
+    source.subscribe(() => console.log('3inside subscribe'));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #6: Observables with 'throw'");
+    const source6 = Rx.Observable.of(1,2,3,4,5,6)
+                     .map(x => {
+                          if( x === 3) {
+                             throw "Cannot process 3";
+                          } 
+                          return x;
+                     })
+                     .subscribe(
+                          x => console.log("*** processed x = "+x),
+                          error => console.log("==> throw error: "+error)
+                     );
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #7: Observables with 'throw' and 'retry'");
+    const source7 = Rx.Observable.of(1,2,3,4,5,6)
+                     .map(x => {
+                          if( x % 2 === 0) {
+                             throw "Cannot process even number: "+x;
+                          } 
+                          return x;
+                     })
+                     .retry(3)
+                     .catch(err => Rx.Observable.throw("Failing after 3 attempts"))
+                     .subscribe(
+                          x => console.log("*** processed x = "+x),
+                          error => console.log("==> throw error: "+error)
+                     );
+
+    var source = Rx.Observable.range(0,3)
+                   .map(x => Rx.Observable.range(x, 3))
+                 //.map(x => Rx.Observable.create(observer => {
+                 //  return observer.onNext(x);
+                 //}))
+                   .concatAll();
+
+    var result = source;
+    result.subscribe(x => console.log('concatAll x = '+x));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #8: Observable with 'ReplaySubject'");
+    var subject = new Rx.ReplaySubject(2); // buffer size 
+    
+    subject.onNext('a');
+    subject.onNext('b');
+    subject.onNext('c');
+    subject.subscribe(x => console.log("x + '<br>'"));
+    subject.onNext('d');
+    //---------------------------------------------------
+  </script>
+ </body>
+</html>
+

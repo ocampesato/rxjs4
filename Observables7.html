@@ -1,0 +1,150 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+  <style>
+    div {
+      width:500px; height:250px;
+    } 
+  </style>
+ </head>
+
+ <body>
+  <button type="button" id="btn1">ClickMe</button>
+  <div id="bigdiv1"></div>
+  <div id="bigdiv2"></div>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+
+    //---------------------------------------------------
+    console.log("Sample #1: Observables and 'flatMap'"); 
+    console.log("------------------------------------"); 
+    const request = Rx.Observable.of("https://api.github.com/users");
+    const response = request
+                      .flatMap(url => Rx.Observable.fromPromise($.get(url)));
+ 
+    Rx.Observable.interval(1000).take(5)
+      .withLatestFrom(response, (i,users) => users[i])
+      .subscribe(user => console.log("Github login = "+user.login));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #2: buttons and Observables");
+    var btn1 = document.getElementById('btn1');
+    var btn1ClickStream = Rx.Observable.fromEvent(btn1, 'click');
+    
+    /*
+    var buttonClick = btn1ClickStream.subscribe(
+      function(i) {console.log("button: read")},
+      function(e) {console.log("button error: "+e)},
+      function()  {console.log("button: done")}
+    );
+    */
+    
+    var buttonClick = btn1ClickStream.subscribe(
+      function() {
+         var randomOffset = Math.floor(Math.random()*500);
+         console.log("random = "+randomOffset);
+      }
+    )
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #3: Converting DOM event to an Observable sequence");
+    var result = document.getElementById('bigdiv1');
+    document.addEventListener('mousemove', 
+         e => console.log("bigdiv1: "+e.clientX+', '+e.clientY));
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("Sample #4: Importing a DOM event into an Observable");
+    var elem2  = document.getElementById('bigdiv2');
+  //var source = Rx.Observable.fromEvent(document, 'mousemove');
+    var source = Rx.Observable.fromEvent(elem2, 'mousemove');
+    var result = source.subscribe(e => 
+                   console.log("bigdiv2: "+e.clientX+', '+e.clientY));
+    //---------------------------------------------------
+
+// NEW CONTENT TBD... 
+/*
+  const stream1 = Rx.Observable.of(2);
+  const stream2 = Rx.Observable.of(4);
+  const stream3 = Rx.Observable.of(6);
+  const stream4 = Rx.Observable
+                    .concat(stream1, stream2, stream3)
+                    .reduce((x,y) => x+y)
+  stream4.subscribe(console.log); 
+*/
+
+/*
+  var source = Rx.Observable.just(42);
+  
+  var reqStream = Rx.Observable.just('https://api.github.com/users');
+  
+  var responseStream = reqStream
+    .flatMap(function(requestUrl) {
+      return Rx.Observable.fromPromise(jQuery.getJSON(requestUrl));
+    });
+  
+  responseStream.subscribe(function(response) {
+    // render `response` to the DOM however you wish
+    console.log("in responseStream subscribe...");
+  });
+*/
+
+/*
+  var promiseUrls = [];
+  for (i = 0; i < 10; i++) {
+      promiseUrls.push('http://localhost:4000/service/' + i);
+  }
+
+  urlStream = Rx.Observable.from(promiseUrls);
+  urlStream
+    //.concatMap(function(url){
+      .map(function(url){
+          return Rx.Observable.fromPromise(url)
+      })
+      .subscribe(function (response) {
+         result = response.data + " ";
+         console.log("result: "+result);
+      });
+*/
+/*
+    console.log("Sample #6: Observables with 'throw'");
+    
+    const source = Rx.Observable.create(observer => { 
+                   var num = 0;
+                   const id = setInterval(() => {
+                      observer.next(Next ${num}++}');
+                   }, 1000); 
+
+                   return () => { 
+                      clearInterval(id);
+                   }
+    });
+
+    const result = source.subscribe(console.log);
+*/
+  </script>
+ </body>
+</html>
+

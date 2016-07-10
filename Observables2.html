@@ -1,0 +1,147 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.async.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.coincidence.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.binding.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.time.js">
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/rxjs-dom/2.0.7/rx.dom.js">
+  </script>
+<!--
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.js">
+  </script>
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/rxjs-jquery/1.1.6/rx.jquery.node.js>
+  </script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+-->
+
+  <script>
+// https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+// http://reactivex.io/documentation/operators/just.html 
+// http://reactivex.io/documentation/operators.html#creating
+    
+    //---------------------------------------------------
+    console.log("=> Sample #1: a simple Observable");
+    var source = Rx.Observable.create(observer => {
+      // Yield a single value and complete
+      observer.onNext(42);
+      observer.onCompleted();
+    
+      // Any cleanup logic might go here
+      return () => console.log('disposed')
+    });
+    
+    var subscription = source.subscribe(
+      x  => console.log('Simple onNext: %s', x),
+      e  => console.log('Simple onError: %s', e),
+      () => console.log('Simple onCompleted')
+    );
+    
+    subscription.dispose();
+    //---------------------------------------------------
+   
+    //---------------------------------------------------
+    console.log("=> Sample #2: Observables and 'range'");
+    var source = Rx.Observable.range(1, 5);
+    
+    // Display each item in the range (1,5)
+    var subscription = source.subscribe(
+      x  => console.log('Range onNext:  %s', x),
+      e  => console.log('Range onError: %s', e),
+      () => console.log('Range onCompleted'));
+    //---------------------------------------------------
+    
+    //---------------------------------------------------
+    console.log("=> Sample #2: 5 elements with Observables and 'from'");
+    var array1 = ['1','1','foo','2','3','5','bar','8','13'];
+
+    var source = Rx.Observable.from(array1);
+    var result1 = source;
+    result1.subscribe(x => console.log("array1 x = "+x));
+
+    console.log("=> Sample #3: string with Observables and 'from'");
+    var source = Rx.Observable.from("abcdef");
+    var result1 = source;
+    result1.subscribe(x => console.log("string x = "+x));
+    //---------------------------------------------------
+
+/*
+    //---------------------------------------------------
+    console.log("=> Sample #4: unlimited with Observables");
+    var source = Rx.Observable.interval(500)
+                   .map(i => ['1','1','foo','2','3','5','bar','8','13'][i]);
+    var result2 = source;
+    result2.subscribe(x => console.log(x));
+    //---------------------------------------------------
+*/
+
+    //---------------------------------------------------
+    console.log("=> Sample #5: 3 elements with Observables and 'take'");
+    var source = Rx.Observable.interval(100).take(3)
+                   .map(i => ['1','2','3','4','5','6','7','8'][i]);
+    var result3 = source.subscribe(x => console.log("result3 x = "+x));
+
+    console.log("=> Sample #6: range and multiples of 2 AND 3");
+    var source = Rx.Observable
+                   .range(0, 20)
+                   .filter(x => x > 0) 
+                   .filter(x => x % 2 == 0)
+                   .filter(x => x % 3 == 0)
+
+    var result5 = source.subscribe(
+       function (x) {
+           console.log('Range Next: ' + x);
+       },
+       function (err) {
+           console.log('Range Error: ' + err);   
+       },
+       function () {
+           console.log('Range Completed');   
+       });
+    //---------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("=> Sample #7: range and multiples of 2 OR 3");
+    var source = Rx.Observable
+                   .range(0, 20)
+                   .filter(x => x > 0) 
+                   .filter(x => (x % 2 == 0) || (x % 3 == 0))
+
+    var result7 = source.subscribe(
+       function (x) {
+           console.log('Range Next: ' + x);
+       },
+       function (err) {
+           console.log('Range Error: ' + err);   
+       },
+       function () {
+           console.log('Range Completed');   
+    });
+    //---------------------------------------------------
+
+//---------------------------------------------------------
+// Exercise: create an observable that displays the numbers
+// between 1 and 50 that are divisible by a divisor of 12
+//---------------------------------------------------------
+
+    //---------------------------------------------------
+    console.log("=> Sample #8: range and bufferCount");
+    Rx.Observable.range(1, 9).bufferCount(3)
+      .subscribe(x => console.log("buffer x = "+x));
+    //---------------------------------------------------
+  </script>
+ </body>
+</html>
+

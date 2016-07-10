@@ -1,0 +1,44 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Working with Observables</title>
+ </head>
+
+ <body>
+  <script>
+// https://www.youtube.com/watch?v=zAWB3lPixtk
+// https://medium.com/@benlesh/learning-observable-by-building-observable-d5da57405d87#.l1eoy5kmw
+// "Observables are functions that take an observer and return a function"
+
+    let Observer = {
+       next(value) {
+          document.body.innerText += value+", I just woke up\n"
+       },
+       error(error) {
+          document.body.innerText += "something happened: "+error+"\n"
+       },
+       complete() {
+          document.body.innerText += "I'm complete now\n"
+       }
+    }
+
+    function myStatus(Observer) { 
+       let id = setInterval(() => { 
+          Observer.next("pasta")
+       }, 800)
+
+       return () => {
+          clearInterval(id)
+          Observer.complete()
+       }
+    }
+
+    let unsubscribe = myStatus(Observer)
+    setTimeout(unsubscribe, 4500)
+
+    // infinite loop:
+  //myStatus(Observer);
+  </script>
+ </body>
+</html>
+
